@@ -37,3 +37,13 @@ resource "google_compute_network_peering" "hub_to_spoke" {
   peer_network         = google_compute_network.vpc.id
   export_custom_routes = true
 }
+
+# Explicit default route to Hub VPC
+resource "google_compute_route" "default" {
+  name             = "${var.vpc_name}-hub-default"
+  project          = var.project_id
+  dest_range       = "0.0.0.0/0"
+  network          = google_compute_network.vpc.name
+  next_hop_gateway = "${var.vpc_name}-to-hub"
+  priority         = 10000
+}
